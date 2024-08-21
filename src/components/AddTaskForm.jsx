@@ -1,25 +1,40 @@
+import React, { useState } from 'react';
+
 const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
-  return(
-    <>
-      {/* Add Task */}
-      <div className="row">
-        <div className="col">
-          <input 
-            value={newTask}
-            onChange={ (e) => setNewTask(e.target.value)}
-            className="form-control form-control-lg"
-          />
-        </div>
-        <div className="col-auto">
-          <button
-            onClick={addTask}
-            className="btn btn-lg btn-success"
-          >Add Task</button>
-        </div>
-      </div>
-      <br />
-    </>
-  )
-}
+  const [taskDetails, setTaskDetails] = useState(''); // State for task details
+  const [priority, setPriority] = useState('low'); // Default priority
+
+  const handleAddTask = () => {
+    if (newTask && taskDetails) {
+      addTask(newTask, taskDetails, priority); // Pass name, details, and priority
+      setNewTask(''); // Reset task name
+      setTaskDetails(''); // Reset task details
+      setPriority('low'); // Reset priority after adding
+    }
+  };
+
+  return (
+    <div>
+      <input 
+        value={newTask}
+        onChange={(e) => setNewTask(e.target.value)}
+        className="form-control"
+        placeholder="Add a new task"
+      />
+      <input 
+        value={taskDetails}
+        onChange={(e) => setTaskDetails(e.target.value)}
+        className="form-control"
+        placeholder="Add task details"
+      />
+      <select value={priority} onChange={(e) => setPriority(e.target.value)} className="form-control">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+      <button onClick={handleAddTask} className="btn btn-primary">Add Task</button>
+    </div>
+  );
+};
 
 export default AddTaskForm;

@@ -1041,3 +1041,45 @@ body {
   content: var(--tw-content);
   background-image: var(--dark-gradient),var(--aurora);
 }
+.taskDetails {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #131212;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+.taskPriorityBox {
+  display: inline-block;
+  background-color: #131212; /* Light gray background */
+  border: 1px solid #ccc; /* Gray border */
+  border-radius: 4px; /* Rounded corners */
+  padding: 4px 8px; /* Padding for spacing */
+  margin-left: 5px; /* Space from the task createdAt */
+}
+
+.priorityText {
+  font-weight: bold; /* Bold text for emphasis */
+}
+body {
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.container {
+  padding: 20px;
+}
+
+.light-mode {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.dark-mode {
+  background-color: #333333;
+  color: #ffffff;
+}
+
+.btn {
+  margin-top: 10px;
+}
+
+
