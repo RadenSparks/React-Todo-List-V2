@@ -1,6 +1,13 @@
 import React, { useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck, faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import { Box, Text, Input, Button, Textarea, Flex, IconButton, Stack } from '@chakra-ui/react';
+
+const priorityColors = {
+  low: 'green.200', // Light green for low priority
+  medium: 'yellow.300', // Light yellow for medium priority
+  high: 'red.300', // Light red for high priority
+};
 
 const ToDo = ({ toDo, markDone, setUpdateData, deleteTask, updateTask }) => {
   const [editingTaskId, setEditingTaskId] = useState(null);
@@ -20,69 +27,91 @@ const ToDo = ({ toDo, markDone, setUpdateData, deleteTask, updateTask }) => {
           const createdAt = new Date(task.createdAt).toLocaleString();
 
           return (
-            <React.Fragment key={task.id}>
-              <div className="col taskBg">
-                <div className={task.status ? 'done' : ''}>
+            <Box key={task.id} p={4} borderWidth={1} borderRadius="md" mb={4} className="taskBg">
+              <Flex alignItems="center" justifyContent="space-between">
+                <Text fontWeight={task.status ? 'bold' : 'normal'} textDecoration={task.status ? 'line-through' : 'none'}>
                   <span className="taskNumber">{index + 1}</span>
                   {editingTaskId === task.id ? (
-                    <input
-                      type="text"
+                    <Input
                       value={editedTitle}
                       onChange={(e) => setEditedTitle(e.target.value)}
                       placeholder="Edit task title..."
-                      style={{ color: '#000', backgroundColor: '#fff', margin: '10px 0', width: '100%' }}
+                      mt={2}
                     />
                   ) : (
-                    <span className="taskText">{task.title}</span>
+                    <Text as="span" ml={2}>{task.title}</Text>
                   )}
-                  <span className="taskTime" style={{ marginLeft: '10px' }}>{createdAt}</span> {/* Added margin-left */}
-                  <span className={`taskPriority ${task.priority}`}>{task.priority}</span>
-                </div>
-                <div className="iconsWrap">
-                  <span title="Completed / Not Completed" onClick={() => markDone(task.id)}>
-                    <FontAwesomeIcon icon={faCircleCheck} />
-                  </span>
-                  <span title="Edit" onClick={() => {
-                    setEditingTaskId(task.id);
-                    setEditedTitle(task.title);
-                    setEditedDetails(task.details || '');
-                  }}>
-                    <FontAwesomeIcon icon={faPen} />
-                  </span>
-                  <span title="Delete" onClick={() => deleteTask(task.id)}>
-                    <FontAwesomeIcon icon={faTrashCan} />
-                  </span>
-                </div>
-                <div className="detailsSection" style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
-                  <p><strong>Details:</strong> {task.details || 'No details provided.'}</p>
-                  {editingTaskId === task.id && (
-                    <>
-                      <textarea
-                        value={editedDetails}
-                        onChange={(e) => setEditedDetails(e.target.value)}
-                        rows={3}
-                        placeholder="Edit task details..."
-                        style={{ color: '#000', backgroundColor: '#fff', margin: '10px 0', width: '100%' }}
-                      />
-                      <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                        <button
-                          onClick={() => handleEditTask(task.id)}
-                          style={{ backgroundColor: 'blue', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px' }}
-                        >
-                          Save
-                        </button>
-                        <button
-                          onClick={() => setEditingTaskId(null)}
-                          style={{ backgroundColor: 'red', color: 'white', padding: '8px 12px', border: 'none', borderRadius: '4px' }}
-                        >
-                          Cancel
-                        </button>
-                      </div>
-                    </>
-                  )}
-                </div>
-              </div>
-            </React.Fragment>
+                  <Text as="span" ml={2} fontSize="sm" color="gray.500">{createdAt}</Text>
+                  <Box 
+                    as="span" 
+                    ml={2} 
+                    bg={priorityColors[task.priority]} 
+                    color="black" 
+                    px={2} 
+                    py={1} 
+                    borderRadius="md"
+                  >
+                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                  </Box>
+                </Text>
+                <Flex>
+                  <IconButton
+                    icon={<FontAwesomeIcon icon={faCircleCheck} />}
+                    onClick={() => markDone(task.id)}
+                    aria-label="Mark as done"
+                    variant="outline"
+                    colorScheme="green"
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<FontAwesomeIcon icon={faPen} />}
+                    onClick={() => {
+                      setEditingTaskId(task.id);
+                      setEditedTitle(task.title);
+                      setEditedDetails(task.details || '');
+                    }}
+                    aria-label="Edit task"
+                    variant="outline"
+                    colorScheme="blue"
+                    mr={2}
+                  />
+                  <IconButton
+                    icon={<FontAwesomeIcon icon={faTrashCan} />}
+                    onClick={() => deleteTask(task.id)}
+                    aria-label="Delete task"
+                    variant="outline"
+                    colorScheme="red"
+                  />
+                </Flex>
+              </Flex>
+              <Stack spacing={2} mt={4}>
+                <Text><strong>Details:</strong> {task.details || 'No details provided.'}</Text>
+                {editingTaskId === task.id && (
+                  <>
+                    <Textarea
+                      value={editedDetails}
+                      onChange={(e) => setEditedDetails(e.target.value)}
+                      rows={3}
+                      placeholder="Edit task details..."
+                    />
+                    <Flex justifyContent="space-between">
+                      <Button
+                        onClick={() => handleEditTask(task.id)}
+                        colorScheme="blue"
+                      >
+                        Save
+                      </Button>
+                      <Button
+                        onClick={() => setEditingTaskId(null)}
+                        colorScheme="red"
+                      >
+                        Cancel
+                      </Button>
+                    </Flex>
+                  </>
+                )}
+              </Stack>
+            </Box>
           );
         })
       }
