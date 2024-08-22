@@ -1082,4 +1082,82 @@ body {
   margin-top: 10px;
 }
 
+.taskPriority {
+  margin-left: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: white;
+}
+
+.taskPriority.low {
+  background-color: green; /* Low priority */
+}
+
+.taskPriority.medium {
+  background-color: orange; /* Medium priority */
+}
+
+.taskPriority.high {
+  background-color: red; /* High priority */
+}
+.taskDetails {
+  background-color: #f8f9fa; /* Light background */
+  padding: 10px;
+  border: 1px solid #dee2e6; /* Border color */
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.taskPriority {
+  margin-left: 10px;
+  padding: 2px 5px;
+  border-radius: 4px;
+  color: white;
+  background-color: #007bff; /* Bootstrap primary color */
+}
+
+.taskDetails {
+  background-color: #f8f9fa; /* Light background */
+  padding: 10px;
+  border: 1px solid #dee2e6; /* Border color */
+  border-radius: 5px;
+  margin-top: 5px;
+}
+.detailsSection {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #161718; /* Light background */
+  border: 1px solid #dbd8d8; /* Border color */
+  border-radius: 5px;
+}
+
+.detailsSection textarea {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.detailsSection button {
+  margin-right: 5px;
+}
+.detailsSection {
+  margin-top: 10px;
+  padding: 10px;
+  background-color: #171718; /* Light background */
+  border: 1px solid #dee2e6; /* Border color */
+  border-radius: 5px;
+}
+
+.detailsSection textarea,
+.detailsSection input {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.detailsSection button {
+  margin-right: 5px;
+}
+input,
+textarea {
+  color: #000; /* Change this to a color that contrasts with your background */
+  background-color: #fff; /* Optional: set a background color for better visibility */
+}
 

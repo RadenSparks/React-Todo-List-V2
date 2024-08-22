@@ -13,22 +13,22 @@ function App() {
 
   // Tasks (ToDo List) State
   const [toDo, setToDo] = useState([
-    { id: 1, title: 'Task 1', status: false, createdAt: new Date().toLocaleString() },
-    { id: 2, title: 'Task 2', status: false, createdAt: new Date().toLocaleString() }
+    { id: 1, title: 'Task 1', status: false, createdAt: new Date().toLocaleString(), priority: 'low', details: '' },
+    { id: 2, title: 'Task 2', status: false, createdAt: new Date().toLocaleString(), priority: 'medium', details: '' }
   ]);
 
   // Temp State
   const [newTask, setNewTask] = useState('');
-  const [updateData, setUpdateData] = useState('');
+  const [updateData, setUpdateData] = useState(null);
 
   // Add task 
-  const addTask = (priority) => {
+  const addTask = (priority, details) => {
     if (newTask) {
-      let num = toDo.length + 1;
+      const newId = toDo.length ? Math.max(toDo.map(task => task.id)) + 1 : 1; // Better ID generation
 
       setToDo([
         ...toDo,
-        { id: num, title: newTask, status: false, createdAt: new Date().toLocaleString(), priority } // Include priority
+        { id: newId, title: newTask, status: false, createdAt: new Date().toLocaleString(), priority, details } // Include details
       ]);
 
       setNewTask('');
@@ -51,7 +51,7 @@ function App() {
 
   // Cancel update
   const cancelUpdate = () => {
-    setUpdateData('');
+    setUpdateData(null);
   };
 
   // Change task for update
@@ -60,14 +60,13 @@ function App() {
   };
 
   // Update task
-  const updateTask = () => {
-    let removeOldRecord = [...toDo].filter(task => task.id !== updateData.id);
-    setToDo([
-      ...removeOldRecord,
-      updateData
-    ]);
+  const updateTask = (taskId, updatedData) => {
+    const updatedTasks = toDo.map(task => 
+      task.id === taskId ? { ...task, ...updatedData } : task
+    );
 
-    setUpdateData('');
+    setToDo(updatedTasks);
+    setUpdateData(null);
   };
 
   // Toggle Theme
@@ -79,12 +78,12 @@ function App() {
     <div className={`container App ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
       <br /><br />
       <h2>To Do List App (ReactJS)</h2>
-      <button onClick={toggleTheme} className="btn btn-secondary">
+      <button onClick={toggleTheme} className="btn btn-secondary" aria-label={`Switch to ${isDarkMode ? 'Light' : 'Dark'} Mode`}>
         Toggle to {isDarkMode ? 'Light' : 'Dark'} Mode
       </button>
       <br /><br />
 
-      {updateData && updateData ? (
+      {updateData ? (
         <UpdateForm
           updateData={updateData}
           changeHolder={changeHolder}
@@ -99,13 +98,14 @@ function App() {
         />
       )}
 
-      {toDo && toDo.length === 0 ? 'No Tasks...' : ''}
+      {toDo.length === 0 && <p>No Tasks...</p>}
 
       <ToDo
         toDo={toDo}
         markDone={markDone}
         setUpdateData={setUpdateData}
         deleteTask={deleteTask}
+        updateTask={updateTask} // Pass the updateTask function here
       />
     </div>
   );
