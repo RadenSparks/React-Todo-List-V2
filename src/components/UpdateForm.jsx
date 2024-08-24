@@ -2,60 +2,42 @@ import React from 'react';
 import { Box, Button, Input, Select } from '@chakra-ui/react';
 
 const UpdateForm = ({ updateData, changeHolder, updateTask, cancelUpdate }) => {
-  const handleChange = (e) => {
-    changeHolder(e);
+  const { title, details, priority, id } = updateData;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    updateTask(id, { title, details, priority });
   };
 
   return (
-    <Box display="flex" alignItems="center" mb={4}>
-      <Box flex="1" mr={2}>
-        <Input 
-          value={updateData?.title || ''}
-          onChange={handleChange}
-          placeholder="Update task title..."
-          aria-label="Task Title"
-          size="lg"
-        />
-      </Box>
-      <Box mr={2}>
-        <Select 
-          onChange={handleChange} 
-          value={updateData?.priority || 'low'}
-          aria-label="Task Priority"
-          size="lg"
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-        </Select>
-      </Box>
-      <Box flex="1" mr={2}>
-        <Input 
-          type="date"
-          value={updateData?.deadline || ''}
-          onChange={handleChange}
-          aria-label="Task Deadline"
-          size="lg"
-        />
-      </Box>
-      <Box>
-        <Button
-          onClick={updateTask}
-          colorScheme="green"
-          size="lg"
-          isDisabled={!updateData?.title?.trim()}
-          mr={2}
-        >
-          Update
-        </Button>
-        <Button
-          onClick={cancelUpdate}
-          colorScheme="yellow"
-          size="lg"
-        >
-          Cancel
-        </Button>
-      </Box>
+    <Box as="form" onSubmit={handleSubmit} p={4} borderWidth={1} borderRadius="md" mb={4}>
+      <Input
+        placeholder="Task Title"
+        name="title"  // Add name attribute
+        value={title}
+        onChange={changeHolder}
+        mb={2}
+      />
+      <Input
+        placeholder="Task Details"
+        name="details"  // Add name attribute
+        value={details}
+        onChange={changeHolder}
+        mb={2}
+      />
+      <Select
+        placeholder="Select Priority"
+        name="priority"  // Add name attribute
+        value={priority}
+        onChange={changeHolder}
+        mb={2}
+      >
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </Select>
+      <Button type="submit" colorScheme="blue" mr={2}>Update Task</Button>
+      <Button onClick={cancelUpdate} colorScheme="gray">Cancel</Button>
     </Box>
   );
 };

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Button, Heading, Text, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, Box, Button, Heading, Text, extendTheme, Grid } from '@chakra-ui/react';
 import AddTaskForm from './components/AddTaskForm.jsx';
 import UpdateForm from './components/UpdateForm.jsx';
 import ToDo from './components/ToDo.jsx';
@@ -27,7 +27,7 @@ function App() {
 
   const addTask = (priority, details) => {
     if (newTask.trim()) {
-      const newId = toDo.length ? Math.max(toDo.map(task => task.id)) + 1 : 1;
+      const newId = toDo.length ? Math.max(...toDo.map(task => task.id)) + 1 : 1;
 
       setToDo(prevTasks => [
         ...prevTasks,
@@ -55,9 +55,10 @@ function App() {
   };
 
   const handleUpdateChange = (e) => {
-    setUpdateData(prevData => ({ ...prevData, title: e.target.value }));
+    const { name, value } = e.target;
+    setUpdateData(prevData => ({ ...prevData, [name]: value }));
   };
-
+  
   const updateTask = (taskId, updatedData) => {
     setToDo(prevTasks => prevTasks.map(task => 
       task.id === taskId ? { ...task, ...updatedData } : task
@@ -101,13 +102,15 @@ function App() {
         {toDo.length === 0 ? (
           <Text>No Tasks...</Text>
         ) : (
-          <ToDo
-            toDo={toDo}
-            markDone={markDone}
-            setUpdateData={setUpdateData}
-            deleteTask={deleteTask}
-            updateTask={updateTask}
-          />
+          <Grid templateColumns="repeat(auto-fill, minmax(250px, 1fr))" gap={6}>
+            <ToDo
+              toDo={toDo}
+              markDone={markDone}
+              setUpdateData={setUpdateData}
+              deleteTask={deleteTask}
+              updateTask={updateTask}
+            />
+          </Grid>
         )}
       </Box>
     </ChakraProvider>
