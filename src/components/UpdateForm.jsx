@@ -1,43 +1,44 @@
 import React from 'react';
-import { Box, Button, Input, Select } from '@chakra-ui/react';
+import { Box, Button, Input, Select, Textarea, Flex } from '@chakra-ui/react';
 
 const UpdateForm = ({ updateData, changeHolder, updateTask, cancelUpdate }) => {
-  const { title, details, priority, id } = updateData;
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    updateTask(id, { title, details, priority });
-  };
-
   return (
-    <Box as="form" onSubmit={handleSubmit} p={4} borderWidth={1} borderRadius="md" mb={4}>
+    <Box p={5} bg="white" shadow="md" borderRadius="md">
       <Input
-        placeholder="Task Title"
-        name="title"  // Add name attribute
-        value={title}
+        placeholder="Update task title"
+        value={updateData.title}
+        name="title"
         onChange={changeHolder}
-        mb={2}
+        mb={3}
+        borderColor="gray.300"
       />
-      <Input
-        placeholder="Task Details"
-        name="details"  // Add name attribute
-        value={details}
+      <Textarea
+        placeholder="Update task details"
+        value={updateData.details}
+        name="details"
         onChange={changeHolder}
-        mb={2}
+        mb={3}
+        borderColor="gray.300"
       />
       <Select
-        placeholder="Select Priority"
-        name="priority"  // Add name attribute
-        value={priority}
+        value={updateData.priority}
+        name="priority"
         onChange={changeHolder}
-        mb={2}
+        mb={4}
+        borderColor="gray.300"
       >
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
+        <option value="low">Low Priority</option>
+        <option value="medium">Medium Priority</option>
+        <option value="high">High Priority</option>
       </Select>
-      <Button type="submit" colorScheme="blue" mr={2}>Update Task</Button>
-      <Button onClick={cancelUpdate} colorScheme="gray">Cancel</Button>
+      <Flex justifyContent="space-between">
+        <Button colorScheme="gray" onClick={cancelUpdate}>
+          Cancel
+        </Button>
+        <Button colorScheme="teal" onClick={() => updateTask(updateData.id, updateData)}>
+          Update Task
+        </Button>
+      </Flex>
     </Box>
   );
 };

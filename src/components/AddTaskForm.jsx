@@ -1,93 +1,57 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-import { Box, Input, Select, Button, FormLabel, FormErrorMessage } from '@chakra-ui/react';
+import { Box, Button, Input, Select, Textarea, Flex } from '@chakra-ui/react';
 
 const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
-  const [taskDetails, setTaskDetails] = useState('');
-  const [priority, setPriority] = useState('low');
+  const [priority, setPriority] = useState('medium');
+  const [details, setDetails] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [error, setError] = useState('');
 
   const handleAddTask = () => {
-    if (!newTask.trim()) {
-      setError("Task name cannot be empty");
-      return;
-    }
-    addTask(priority, taskDetails, deadline);
-    setNewTask('');
-    setTaskDetails('');
-    setPriority('low');
-    setDeadline('');
-    setError(''); // Clear error on successful add
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      handleAddTask();
-    }
+    addTask(priority, details, deadline);
+    setDetails('');
+    setDeadline(''); // Reset deadline input after adding the task
   };
 
   return (
-    <Box mb={3}>
-      <FormLabel htmlFor="taskName">Task Name:</FormLabel>
-      <Input 
-        id="taskName"
+    <Box p={5} bg="white" shadow="md" borderRadius="md">
+      <Input
+        placeholder="Enter task title"
         value={newTask}
-        onChange={(e) => {
-          setNewTask(e.target.value);
-          setError(''); // Clear error when user types
-        }}
-        placeholder="Add a new task"
-        onKeyPress={handleKeyPress}
-        aria-required="true"
-        aria-invalid={!!error} // Indicate if there's an error
+        onChange={(e) => setNewTask(e.target.value)}
+        mb={3}
+        borderColor="gray.300"
       />
-      {error && <FormErrorMessage>{error}</FormErrorMessage>}
-      
-      <FormLabel htmlFor="taskDetails" mt={2}>Task Details:</FormLabel>
-      <Input 
-        id="taskDetails"
-        value={taskDetails}
-        onChange={(e) => setTaskDetails(e.target.value)}
-        placeholder="Add task details"
-        onKeyPress={handleKeyPress}
+      <Textarea
+        placeholder="Enter task details"
+        value={details}
+        onChange={(e) => setDetails(e.target.value)}
+        mb={3}
+        borderColor="gray.300"
       />
-      
-      <FormLabel htmlFor="taskPriority" mt={2}>Priority:</FormLabel>
-      <Select 
-        id="taskPriority"
-        value={priority} 
-        onChange={(e) => setPriority(e.target.value)} 
-      >
-        <option value="low">Low</option>
-        <option value="medium">Medium</option>
-        <option value="high">High</option>
-      </Select>
-      
-      <FormLabel htmlFor="taskDeadline" mt={2}>Deadline:</FormLabel>
-      <Input 
-        id="taskDeadline"
-        type="date"
+      <Input
+        type="datetime-local"
         value={deadline}
         onChange={(e) => setDeadline(e.target.value)}
+        mb={3}
+        borderColor="gray.300"
       />
-      
-      <Button 
-        onClick={handleAddTask} 
-        colorScheme="blue"
-        mt={3}
-        isDisabled={!newTask.trim()}
+      <Select
+        value={priority}
+        onChange={(e) => setPriority(e.target.value)}
+        mb={4}
+        borderColor="gray.300"
       >
-        Add Task
-      </Button>
+        <option value="low">Low Priority</option>
+        <option value="medium">Medium Priority</option>
+        <option value="high">High Priority</option>
+      </Select>
+      <Flex justifyContent="flex-end">
+        <Button colorScheme="teal" onClick={handleAddTask}>
+          Add Task
+        </Button>
+      </Flex>
     </Box>
   );
-};
-
-AddTaskForm.propTypes = {
-  newTask: PropTypes.string.isRequired,
-  setNewTask: PropTypes.func.isRequired,
-  addTask: PropTypes.func.isRequired,
 };
 
 export default AddTaskForm;

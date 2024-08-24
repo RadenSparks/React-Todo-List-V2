@@ -1,46 +1,48 @@
 import React from 'react';
-import { Box, Text, Flex, IconButton, useColorMode, useColorModeValue } from '@chakra-ui/react';
+import { Box, Text, Flex, IconButton, useColorModeValue } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleCheck, faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 const ToDo = ({ toDo, markDone, deleteTask, setUpdateData }) => {
-  const { colorMode } = useColorMode();
-  
-  // Use different text colors depending on the color mode
-  const textColor = useColorModeValue('black', 'white'); // Black in light mode, white in dark mode
+  const textColor = useColorModeValue('gray.800', 'gray.100');
+  const lowPriorityColor = useColorModeValue('green.100', 'green.900');
+  const mediumPriorityColor = useColorModeValue('yellow.100', 'yellow.900');
+  const highPriorityColor = useColorModeValue('red.100', 'red.900');
+  const defaultColor = useColorModeValue('white', 'gray.800');
 
   const getPriorityColor = (priority) => {
     switch (priority) {
       case 'low':
-        return 'green.100'; // Light green for low priority
+        return lowPriorityColor;
       case 'medium':
-        return 'yellow.100'; // Light yellow for medium priority
+        return mediumPriorityColor;
       case 'high':
-        return 'red.100'; // Light red for high priority
+        return highPriorityColor;
       default:
-        return 'white'; // Default background
+        return defaultColor;
     }
   };
 
   return (
     <>
-      {toDo.map((task, index) => (
+      {toDo.map((task) => (
         <Box
           key={task.id}
           p={4}
           borderWidth={1}
           borderRadius="md"
           mb={4}
-          bg={getPriorityColor(task.priority)} // Set background color based on priority
-          className="taskBg"
+          bg={getPriorityColor(task.priority)}
+          shadow="sm"
+          _hover={{ shadow: 'md' }}
         >
           <Flex alignItems="center" justifyContent="space-between">
-            <Text 
-              fontWeight={task.status ? 'bold' : 'normal'} 
+            <Text
+              fontWeight={task.status ? 'bold' : 'normal'}
               textDecoration={task.status ? 'line-through' : 'none'}
-              color={textColor} // Set the text color based on the color mode
+              color={textColor}
+              fontSize="lg"
             >
-              <span style={{ fontWeight: 'bold', color: 'teal' }}>{index + 1}. </span>
               {task.title}
             </Text>
             <Flex>
@@ -48,15 +50,13 @@ const ToDo = ({ toDo, markDone, deleteTask, setUpdateData }) => {
                 icon={<FontAwesomeIcon icon={faCircleCheck} />}
                 onClick={() => markDone(task.id)}
                 aria-label="Mark as done"
-                variant="outline"
                 colorScheme="green"
                 mr={2}
               />
               <IconButton
                 icon={<FontAwesomeIcon icon={faPen} />}
-                onClick={() => setUpdateData(task)} // Ensure this includes all necessary fields
+                onClick={() => setUpdateData(task)}
                 aria-label="Edit task"
-                variant="outline"
                 colorScheme="blue"
                 mr={2}
               />
@@ -64,15 +64,14 @@ const ToDo = ({ toDo, markDone, deleteTask, setUpdateData }) => {
                 icon={<FontAwesomeIcon icon={faTrashCan} />}
                 onClick={() => deleteTask(task.id)}
                 aria-label="Delete task"
-                variant="outline"
                 colorScheme="red"
               />
             </Flex>
           </Flex>
           <Text mt={2} color={textColor}><strong>Details:</strong> {task.details || 'No details provided.'}</Text>
           <Text color={textColor}><strong>Priority:</strong> {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</Text>
-          <Text color={textColor}><strong>Created At:</strong> {new Date(task.createdAt).toLocaleString()}</Text>
-          <Text color={textColor}><strong>Deadline:</strong> {task.deadline ? new Date(task.deadline).toLocaleString() : 'No deadline set.'}</Text>
+          <Text color={textColor}><strong>Created At:</strong> {task.createdAt}</Text>
+          <Text color={textColor}><strong>Deadline:</strong> {task.deadline ? task.deadline : 'No deadline set.'}</Text>
         </Box>
       ))}
     </>
