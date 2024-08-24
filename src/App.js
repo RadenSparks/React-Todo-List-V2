@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { ChakraProvider, Box, Button, Heading, Text, VStack, extendTheme } from '@chakra-ui/react';
+import { ChakraProvider, Box, Button, Heading, Text, extendTheme } from '@chakra-ui/react';
 import AddTaskForm from './components/AddTaskForm.jsx';
 import UpdateForm from './components/UpdateForm.jsx';
 import ToDo from './components/ToDo.jsx';
