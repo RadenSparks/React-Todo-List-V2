@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Box, Input, Select, Button, FormLabel, Stack } from '@chakra-ui/react';
+import { Box, Input, Select, Button, FormLabel, FormErrorMessage } from '@chakra-ui/react';
 
 const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
-  const [taskDetails, setTaskDetails] = useState(''); // State for task details
-  const [priority, setPriority] = useState('low'); // Default priority
+  const [taskDetails, setTaskDetails] = useState('');
+  const [priority, setPriority] = useState('low');
+  const [deadline, setDeadline] = useState('');
+  const [error, setError] = useState('');
 
   const handleAddTask = () => {
-    if (newTask.trim()) { // Ensure task name is not just whitespace
-      addTask(priority, taskDetails); // Pass the selected priority and details
-      setNewTask(''); // Reset task name
-      setTaskDetails(''); // Reset task details
-      setPriority('low'); // Reset priority after adding
+    if (!newTask.trim()) {
+      setError("Task name cannot be empty");
+      return;
     }
+    addTask(priority, taskDetails, deadline);
+    setNewTask('');
+    setTaskDetails('');
+    setPriority('low');
+    setDeadline('');
+    setError(''); // Clear error on successful add
   };
 
   const handleKeyPress = (e) => {
@@ -22,16 +28,21 @@ const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
   };
 
   return (
-    <Box mb={3}> {/* Margin-bottom for spacing */}
+    <Box mb={3}>
       <FormLabel htmlFor="taskName">Task Name:</FormLabel>
       <Input 
         id="taskName"
         value={newTask}
-        onChange={(e) => setNewTask(e.target.value)}
+        onChange={(e) => {
+          setNewTask(e.target.value);
+          setError(''); // Clear error when user types
+        }}
         placeholder="Add a new task"
         onKeyPress={handleKeyPress}
-        aria-required="true" // Accessibility attribute
+        aria-required="true"
+        aria-invalid={!!error} // Indicate if there's an error
       />
+      {error && <FormErrorMessage>{error}</FormErrorMessage>}
       
       <FormLabel htmlFor="taskDetails" mt={2}>Task Details:</FormLabel>
       <Input 
@@ -53,11 +64,19 @@ const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
         <option value="high">High</option>
       </Select>
       
+      <FormLabel htmlFor="taskDeadline" mt={2}>Deadline:</FormLabel>
+      <Input 
+        id="taskDeadline"
+        type="date"
+        value={deadline}
+        onChange={(e) => setDeadline(e.target.value)}
+      />
+      
       <Button 
         onClick={handleAddTask} 
-        colorScheme="blue" // Chakra UI color scheme for button
-        mt={3} // Margin-top for spacing
-        isDisabled={!newTask.trim()} // Disable button if task name is empty or whitespace
+        colorScheme="blue"
+        mt={3}
+        isDisabled={!newTask.trim()}
       >
         Add Task
       </Button>
