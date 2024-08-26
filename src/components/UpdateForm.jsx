@@ -101,7 +101,7 @@ const UpdateForm = ({ updateData, changeHolder, updateTask, cancelUpdate }) => {
 
 UpdateForm.propTypes = {
   updateData: PropTypes.shape({
-    id: PropTypes.string.isRequired,
+    id: PropTypes.number.isRequired, // Adjust based on the actual ID type used
     title: PropTypes.string,
     details: PropTypes.string,
     priority: PropTypes.oneOf(['low', 'medium', 'high']),
