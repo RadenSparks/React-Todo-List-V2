@@ -1,81 +1,193 @@
-import React from 'react';
-import { Box, Text, Flex, IconButton, useColorModeValue } from '@chakra-ui/react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck, faPen, faTrashCan } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useCallback } from 'react';
+import PropTypes from 'prop-types';
+import { Box, Text, Flex, Button, Collapse, Divider } from '@chakra-ui/react';
+import UpdateForm from './UpdateForm.jsx';
 
-const ToDo = ({ toDo, markDone, deleteTask, setUpdateData }) => {
-  const textColor = useColorModeValue('gray.800', 'gray.100');
-  const lowPriorityColor = useColorModeValue('green.100', 'green.900');
-  const mediumPriorityColor = useColorModeValue('yellow.100', 'yellow.900');
-  const highPriorityColor = useColorModeValue('red.100', 'red.900');
-  const defaultColor = useColorModeValue('white', 'gray.800');
+// Helper function for formatting date
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return 'Invalid date';
+  return `${date.toLocaleDateString()} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+};
 
-  const getPriorityColor = (priority) => {
-    switch (priority) {
-      case 'low':
-        return lowPriorityColor;
-      case 'medium':
-        return mediumPriorityColor;
-      case 'high':
-        return highPriorityColor;
-      default:
-        return defaultColor;
-    }
+const ToDo = ({
+  toDo,
+  markDone,
+  setUpdateData,
+  deleteTask,
+  updateTask,
+  updateData,
+  handleUpdateChange,
+  cancelUpdate
+}) => {
+  const [hoveredTaskId, setHoveredTaskId] = useState(null);
+  const [completedTasks, setCompletedTasks] = useState(new Set());
+
+  const handleMouseEnter = useCallback((taskId) => {
+    if (updateData && updateData.id === taskId) return;
+    setHoveredTaskId(taskId);
+  }, [updateData]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (updateData) return;
+    setHoveredTaskId(null);
+  }, [updateData]);
+
+  const toggleCompletion = (taskId) => {
+    setCompletedTasks((prev) => {
+      const newCompletedTasks = new Set(prev);
+      if (newCompletedTasks.has(taskId)) {
+        newCompletedTasks.delete(taskId);
+      } else {
+        newCompletedTasks.add(taskId);
+      }
+      return newCompletedTasks;
+    });
   };
 
   return (
     <>
-      {toDo.map((task) => (
+      {toDo.map((task, index) => (
         <Box
           key={task.id}
-          p={4}
-          borderWidth={1}
+          p={6}
+          bg={completedTasks.has(task.id) ? 'green.50' : (index % 2 === 0 ? 'gray.50' : 'gray.100')}
+          shadow="lg"
           borderRadius="md"
+          borderLeft="6px solid"
+          borderColor={
+            task.priority === 'low' ? 'green.400' :
+            task.priority === 'medium' ? 'yellow.400' :
+            'red.400'
+          }
           mb={4}
-          bg={getPriorityColor(task.priority)}
-          shadow="sm"
-          _hover={{ shadow: 'md' }}
+          position="relative"
+          onMouseEnter={() => handleMouseEnter(task.id)}
+          onMouseLeave={handleMouseLeave}
+          _hover={{ transform: 'scale(1.03)', transition: 'transform 0.3s ease-in-out', shadow: 'xl' }}
         >
-          <Flex alignItems="center" justifyContent="space-between">
-            <Text
-              fontWeight={task.status ? 'bold' : 'normal'}
-              textDecoration={task.status ? 'line-through' : 'none'}
-              color={textColor}
-              fontSize="lg"
-            >
-              {task.title}
-            </Text>
-            <Flex>
-              <IconButton
-                icon={<FontAwesomeIcon icon={faCircleCheck} />}
-                onClick={() => markDone(task.id)}
-                aria-label="Mark as done"
-                colorScheme="green"
-                mr={2}
-              />
-              <IconButton
-                icon={<FontAwesomeIcon icon={faPen} />}
-                onClick={() => setUpdateData(task)}
-                aria-label="Edit task"
-                colorScheme="blue"
-                mr={2}
-              />
-              <IconButton
-                icon={<FontAwesomeIcon icon={faTrashCan} />}
-                onClick={() => deleteTask(task.id)}
-                aria-label="Delete task"
-                colorScheme="red"
-              />
+          <Text
+            fontWeight="bold"
+            color={completedTasks.has(task.id) ? 'green.800' : 'gray.800'}
+            fontSize="xl"
+            mb={2}
+            textDecoration={completedTasks.has(task.id) ? 'line-through' : 'none'}
+          >
+            {task.title}
+          </Text>
+          <Divider borderColor="gray.300" mb={3} />
+          <Box
+            filter={completedTasks.has(task.id) ? 'blur(2px)' : 'none'}
+            mt={4}
+          >
+            <Flex direction="column" mb={4}>
+              <Text
+                fontSize="md"
+                color={completedTasks.has(task.id) ? 'green.600' : 'gray.700'}
+                mb={4}
+                textDecoration={completedTasks.has(task.id) ? 'line-through' : 'none'}
+              >
+                <strong>Summary:</strong> {task.details}
+              </Text>
+              <Flex mb={4} alignItems="center">
+                <Box
+                  p={2}
+                  bg={
+                    task.priority === 'low' ? 'green.100' :
+                    task.priority === 'medium' ? 'yellow.100' :
+                    'red.100'
+                  }
+                  borderRadius="md"
+                  mr={4}
+                >
+                  <Text fontSize="sm" color={
+                    task.priority === 'low' ? 'green.700' :
+                    task.priority === 'medium' ? 'yellow.700' :
+                    'red.700'
+                  }>
+                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority
+                  </Text>
+                </Box>
+                <Text fontSize="sm" color="gray.500">
+                  <strong>Deadline:</strong> {task.deadline ? formatDate(task.deadline) : 'No deadline set'}
+                </Text>
+              </Flex>
             </Flex>
-          </Flex>
-          <Text mt={2} color={textColor}><strong>Details:</strong> {task.details || 'No details provided.'}</Text>
-          <Text color={textColor}><strong>Priority:</strong> {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</Text>
-          <Text color={textColor}><strong>Created At:</strong> {task.createdAt}</Text>
-          <Text color={textColor}><strong>Deadline:</strong> {task.deadline ? task.deadline : 'No deadline set.'}</Text>
+          </Box>
+          {updateData && updateData.id === task.id && (
+            <Box mt={4} p={4} bg="teal.50" shadow="lg" borderRadius="md" borderTop="4px solid" borderColor="teal.300">
+              <UpdateForm
+                updateData={updateData}
+                changeHolder={handleUpdateChange}
+                updateTask={updateTask}
+                cancelUpdate={cancelUpdate}
+              />
+            </Box>
+          )}
+          <Collapse in={hoveredTaskId === task.id && !(updateData && updateData.id === task.id)}>
+            <Box
+              p={4}
+              bg="white"
+              borderRadius="md"
+              shadow="md"
+              position="absolute"
+              top="0"
+              left="0"
+              right="0"
+              bottom="0"
+              display="flex"
+              flexDirection="column"
+              justifyContent="center"
+              alignItems="center"
+              zIndex="10"
+            >
+              <Text
+                fontWeight="bold"
+                color={completedTasks.has(task.id) ? 'green.800' : 'gray.800'}
+                textDecoration={completedTasks.has(task.id) ? 'line-through' : 'none'}
+              >
+                {task.title}
+              </Text>
+              <Text fontSize="sm" color="gray.600" mt={2}><strong>Summary:</strong> {task.summary || 'No summary available'}</Text>
+              <Text fontSize="sm" color="gray.600"><strong>Details:</strong> {task.details || 'No details available'}</Text>
+              <Text fontSize="sm" color="gray.600"><strong>Created at:</strong> {formatDate(task.createdAt)}</Text>
+              <Text fontSize="sm" color="gray.600"><strong>Deadline:</strong> {task.deadline ? formatDate(task.deadline) : 'No deadline set'}</Text>
+              <Flex mt={4} justifyContent="space-between" width="100%">
+                <Button size="sm" colorScheme="teal" onClick={() => toggleCompletion(task.id)}>
+                  {completedTasks.has(task.id) ? 'Undo' : 'Complete'}
+                </Button>
+                <Button size="sm" colorScheme="teal" onClick={() => setUpdateData(task)}>
+                  Edit
+                </Button>
+                <Button size="sm" colorScheme="red" onClick={() => deleteTask(task.id)}>
+                  Delete
+                </Button>
+              </Flex>
+            </Box>
+          </Collapse>
         </Box>
       ))}
     </>
   );
+};
+
+ToDo.propTypes = {
+  toDo: PropTypes.arrayOf(PropTypes.shape({
+    id: PropTypes.string.isRequired,
+    title: PropTypes.string.isRequired,
+    details: PropTypes.string,
+    priority: PropTypes.oneOf(['low', 'medium', 'high']).isRequired,
+    deadline: PropTypes.string,
+    createdAt: PropTypes.string,
+    summary: PropTypes.string
+  })).isRequired,
+  markDone: PropTypes.func,
+  setUpdateData: PropTypes.func.isRequired,
+  deleteTask: PropTypes.func.isRequired,
+  updateTask: PropTypes.func.isRequired,
+  updateData: PropTypes.object,
+  handleUpdateChange: PropTypes.func.isRequired,
+  cancelUpdate: PropTypes.func.isRequired
 };
 
 export default ToDo;
