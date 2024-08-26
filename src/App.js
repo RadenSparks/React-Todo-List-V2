@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChakraProvider, Box, Heading, Text, extendTheme, Grid, Flex, Button, useToast, VStack, Input, IconButton, HStack, Checkbox, Stack } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
 import ToDo from './components/ToDo.jsx';
+import Clock from './components/Clock.jsx';  // Import updated Clock component
 
 // Define the theme with custom checkbox styles
 const theme = extendTheme({
@@ -281,6 +282,11 @@ function App() {
             <Heading as="h2" size="xl" mb={6} textAlign="center" color="teal.500">
               To-Do List App
             </Heading>
+
+            {/* Real-time Clock */}
+            <HStack mb={4} justifyContent="center">
+              <Clock /> {/* Add Clock Component */}
+            </HStack>
 
             {/* Button to add a default task */}
             <HStack mb={4} justifyContent="center">
