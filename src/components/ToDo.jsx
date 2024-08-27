@@ -87,7 +87,7 @@ const ToDo = ({
                 mb={4}
                 textDecoration={completedTasks.has(task.id) ? 'line-through' : 'none'}
               >
-                <strong>Summary:</strong> {task.details}
+                <strong>Details:</strong> {task.details || 'No details available'}
               </Text>
               <Flex mb={4} alignItems="center">
                 <Box
@@ -105,7 +105,7 @@ const ToDo = ({
                     task.priority === 'medium' ? 'yellow.700' :
                     'red.700'
                   }>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} Priority
+                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)} {/* Removed "Priority" */}
                   </Text>
                 </Box>
                 <Text fontSize="sm" color="gray.500">
@@ -148,8 +148,7 @@ const ToDo = ({
               >
                 {task.title}
               </Text>
-              <Text fontSize="sm" color="gray.600" mt={2}><strong>Summary:</strong> {task.summary || 'No summary available'}</Text>
-              <Text fontSize="sm" color="gray.600"><strong>Details:</strong> {task.details || 'No details available'}</Text>
+              <Text fontSize="sm" color="gray.600" mt={2}><strong>Details:</strong> {task.details || 'No details available'}</Text>
               <Text fontSize="sm" color="gray.600"><strong>Created at:</strong> {formatDate(task.createdAt)}</Text>
               <Text fontSize="sm" color="gray.600"><strong>Deadline:</strong> {task.deadline ? formatDate(task.deadline) : 'No deadline set'}</Text>
               <Flex mt={4} justifyContent="space-between" width="100%">
@@ -179,7 +178,6 @@ ToDo.propTypes = {
     priority: PropTypes.oneOf(['low', 'medium', 'high']).isRequired,
     deadline: PropTypes.string,
     createdAt: PropTypes.string,
-    summary: PropTypes.string
   })).isRequired,
   markDone: PropTypes.func,
   setUpdateData: PropTypes.func.isRequired,

@@ -6,7 +6,6 @@ const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
   const [priority, setPriority] = useState('low');
   const [details, setDetails] = useState('');
   const [deadline, setDeadline] = useState('');
-  const [summary, setSummary] = useState('');
   const [error, setError] = useState('');
   const toast = useToast();
 
@@ -16,11 +15,10 @@ const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
       return;
     }
     setError('');
-    addTask(priority, details, deadline, summary);
+    addTask(priority, details, deadline); // Removed summary
     setPriority('low');
     setDetails('');
     setDeadline('');
-    setSummary('');
     setNewTask('');
     toast({
       title: "Task Added",
@@ -82,16 +80,6 @@ const AddTaskForm = ({ newTask, setNewTask, addTask }) => {
           value={deadline}
           onChange={(e) => setDeadline(e.target.value)}
           borderColor="gray.300"
-        />
-      </FormControl>
-      <FormControl id="task-summary" mb={4}>
-        <FormLabel fontWeight="bold">Summary</FormLabel>
-        <Textarea
-          value={summary}
-          onChange={(e) => setSummary(e.target.value)}
-          placeholder="Enter task summary"
-          borderColor="gray.300"
-          _placeholder={{ color: 'gray.500' }}
         />
       </FormControl>
       <Button

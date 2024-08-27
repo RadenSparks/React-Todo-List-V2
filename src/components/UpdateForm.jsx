@@ -41,18 +41,7 @@ const UpdateForm = ({ updateData, changeHolder, updateTask, cancelUpdate }) => {
         {!updateData.details && <FormErrorMessage>Details are required.</FormErrorMessage>}
       </FormControl>
       
-      <FormControl mb={3}>
-        <FormLabel htmlFor="summary">Task Summary</FormLabel>
-        <Input
-          id="summary"
-          placeholder="Update task summary"
-          value={updateData.summary || ''}
-          name="summary"
-          onChange={changeHolder}
-          borderColor="gray.300"
-          aria-label="Task summary"
-        />
-      </FormControl>
+      {/* Removed Summary Section */}
       
       <FormControl mb={4}>
         <FormLabel htmlFor="priority">Priority</FormLabel>
@@ -106,7 +95,7 @@ UpdateForm.propTypes = {
     details: PropTypes.string,
     priority: PropTypes.oneOf(['low', 'medium', 'high']),
     deadline: PropTypes.string,
-    summary: PropTypes.string
+    // Removed summary PropType
   }).isRequired,
   changeHolder: PropTypes.func.isRequired,
   updateTask: PropTypes.func.isRequired,

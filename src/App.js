@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChakraProvider, Box, Heading, Text, extendTheme, Grid, Flex, Button, useToast, VStack, Input, IconButton, HStack, Checkbox, Stack } from '@chakra-ui/react';
-import { AddIcon, DeleteIcon } from '@chakra-ui/icons';
+import { AddIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon } from '@chakra-ui/icons';
 import ToDo from './components/ToDo.jsx';
 import Clock from './components/Clock.jsx';  // Import updated Clock component
 
@@ -67,6 +67,7 @@ function App() {
   const [updateData, setUpdateData] = useState(null);
   const [sortCriteria, setSortCriteria] = useState({ priority: false, title: false, deadline: false });
   const [defaultTasks] = useState([]);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false); // New state for sidebar visibility
 
   const toast = useToast();
 
@@ -236,44 +237,55 @@ function App() {
     <ChakraProvider theme={theme}>
       <Flex direction={{ base: "column", md: "row" }} minH="100vh">
         {/* Sidebar */}
-        <Box width={{ base: "full", md: "300px" }} p={5} bg="gray.100" boxShadow="md" borderBottomWidth={{ base: "1px", md: "0" }} borderBottomColor="gray.300">
-          <Heading as="h4" size="md" mb={4} color="teal.500">Projects</Heading>
-
-          {/* Form to add a new project */}
-          <HStack mb={4} spacing={2}>
-            <Input
-              placeholder="New Project Name"
-              value={newProjectName}
-              onChange={(e) => setNewProjectName(e.target.value)}
-            />
+        <Box width={isSidebarCollapsed ? "50px" : { base: "full", md: "300px" }} p={5} bg="gray.100" boxShadow="md" borderBottomWidth={{ base: "1px", md: "0" }} borderBottomColor="gray.300" transition="width 0.3s">
+          <HStack justifyContent="space-between" mb={4}>
+            <Heading as="h4" size="md" color="teal.500" display={isSidebarCollapsed ? "none" : "block"}>Projects</Heading>
             <IconButton
-              icon={<AddIcon />}
-              colorScheme="teal"
-              onClick={addProject}
-              aria-label="Add Project"
+              icon={isSidebarCollapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              aria-label="Toggle Sidebar"
             />
           </HStack>
 
-          <VStack align="stretch" spacing={4}>
-            {projects.map(project => (
-              <HStack key={project.id} justifyContent="space-between">
-                <Button
-                  flex="1"
-                  variant={selectedProjectId === project.id ? "solid" : "outline"}
-                  colorScheme="teal"
-                  onClick={() => handleProjectSelect(project.id)}
-                >
-                  {project.name}
-                </Button>
-                <IconButton
-                  icon={<DeleteIcon />}
-                  colorScheme="red"
-                  onClick={() => deleteProject(project.id)}
-                  aria-label="Delete Project"
-                />
-              </HStack>
-            ))}
-          </VStack>
+          {/* Form to add a new project */}
+          {!isSidebarCollapsed && (
+            <HStack mb={4} spacing={2}>
+              <Input
+                placeholder="New Project Name"
+                value={newProjectName}
+                onChange={(e) => setNewProjectName(e.target.value)}
+              />
+              <IconButton
+                icon={<AddIcon />}
+                colorScheme="teal"
+                onClick={addProject}
+                aria-label="Add Project"
+              />
+            </HStack>
+          )}
+
+          {!isSidebarCollapsed && (
+            <VStack align="stretch" spacing={4}>
+              {projects.map(project => (
+                <HStack key={project.id} justifyContent="space-between">
+                  <Button
+                    flex="1"
+                    variant={selectedProjectId === project.id ? "solid" : "outline"}
+                    colorScheme="teal"
+                    onClick={() => handleProjectSelect(project.id)}
+                  >
+                    {project.name}
+                  </Button>
+                  <IconButton
+                    icon={<DeleteIcon />}
+                    colorScheme="red"
+                    onClick={() => deleteProject(project.id)}
+                    aria-label="Delete Project"
+                  />
+                </HStack>
+              ))}
+            </VStack>
+          )}
         </Box>
 
         {/* Main Content */}
@@ -282,11 +294,6 @@ function App() {
             <Heading as="h2" size="xl" mb={6} textAlign="center" color="teal.500">
               To-Do List App
             </Heading>
-
-            {/* Real-time Clock */}
-            <HStack mb={4} justifyContent="center">
-              <Clock /> {/* Add Clock Component */}
-            </HStack>
 
             {/* Button to add a default task */}
             <HStack mb={4} justifyContent="center">
@@ -319,6 +326,10 @@ function App() {
 
         {/* Sorting Menu on the Right */}
         <Box width={{ base: "full", md: "250px" }} p={5} bg="gray.200" boxShadow="md" borderTopWidth={{ base: "1px", md: "0" }} borderTopColor="gray.300">
+          <Heading as="h5" size="sm" mb={3}>Current Time</Heading>
+          <HStack mb={4} justifyContent="center">
+            <Clock /> {/* Move Clock Component here */}
+          </HStack>
           <Heading as="h5" size="sm" mb={3}>Sort Tasks</Heading>
           <VStack align="start" spacing={4}>
             <Checkbox name="priority" onChange={handleSortChange} isChecked={sortCriteria.priority}>

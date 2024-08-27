@@ -19,25 +19,27 @@ const Clock = () => {
 
   const formatTime = (date) => {
     // Format time in a user-friendly manner
-    return date.toLocaleTimeString();
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
   };
 
   return (
     <Box
-      p={4}
-      bg={colors.teal[600]}
-      color="white"
+      p={6}
+      bg={`linear-gradient(to right, ${colors.teal[500]}, ${colors.teal[300]})`}
+      color="black"
       borderRadius="md"
-      boxShadow="md"
+      boxShadow="lg"
       textAlign="center"
       fontSize={{ base: "md", md: "lg" }}
+      border="1px solid"
+      borderColor={colors.teal[600]}
     >
-      <VStack spacing={2}>
-        <Text fontWeight="bold" fontSize="lg">
+      <VStack spacing={4}>
+        <Text fontWeight="bold" fontSize="xl">
           Current Date & Time
         </Text>
-        <Text fontSize="xl">{formatDate(currentDate)}</Text>
-        <Text fontSize="2xl">{formatTime(currentDate)}</Text>
+        <Text fontSize="2xl" fontWeight="semibold">{formatDate(currentDate)}</Text>
+        <Text fontSize="3xl" fontWeight="bold">{formatTime(currentDate)}</Text>
       </VStack>
     </Box>
   );
