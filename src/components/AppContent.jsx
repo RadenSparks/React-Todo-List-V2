@@ -1,9 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
   Box,
-  Heading,
-  Text,
-  Grid,
   Flex,
   Button,
   useToast,
@@ -14,12 +11,12 @@ import {
   Spinner,
   useColorMode,
   Tooltip,
+  Grid,
+  Text,
 } from '@chakra-ui/react';
 import { AddIcon, DeleteIcon, ChevronLeftIcon, ChevronRightIcon, MoonIcon, SunIcon } from '@chakra-ui/icons';
 import ToDo from './ToDo.jsx';
-import Clock from './Clock.jsx';
 import Parallax from './Parallax.jsx';
-import SortingMenu from './SortingMenu.jsx';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import { useUser } from './UserContext'; // Import UserContext
 import './App.css'; // Import your CSS file for animations
@@ -51,8 +48,7 @@ const AppContent = () => {
   const [sortCriteria, setSortCriteria] = useState({ priority: false, title: false, deadline: false, status: false, createdAt: false });
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState('');
-
+  
   const toast = useToast();
 
   useEffect(() => {
@@ -215,19 +211,6 @@ const AppContent = () => {
     });
   }, [toast]);
 
-  const handleSortChange = useCallback((e) => {
-    const { name, checked } = e.target;
-    setSortCriteria(prevState => ({ ...prevState, [name]: checked }));
-  }, []);
-
-  const resetSort = useCallback(() => {
-    setSortCriteria({ priority: false, title: false, deadline: false, status: false, createdAt: false });
-  }, []);
-
-  const selectAllSort = useCallback(() => {
-    setSortCriteria({ priority: true, title: true, deadline: true, status: true, createdAt: true });
-  }, []);
-
   const addDefaultTask = useCallback(() => {
     const newTaskId = (projects.find(p => p.id === selectedProjectId)?.tasks.length || 0) + 1;
     const newTask = { id: newTaskId, title: `Default Task ${newTaskId}`, status: false, createdAt: new Date().toLocaleString(), priority: 'low', details: '', deadline: '' };
@@ -251,13 +234,6 @@ const AppContent = () => {
     if (!project) return [];
 
     let tasks = [...project.tasks];
-
-    // Filter tasks based on search query
-    if (searchQuery) {
-      tasks = tasks.filter(task =>
-        task.title.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
 
     if (sortCriteria.priority) {
       tasks.sort((a, b) => {
@@ -283,7 +259,7 @@ const AppContent = () => {
     }
 
     return tasks;
-  }, [projects, selectedProjectId, searchQuery, sortCriteria]);
+  }, [projects, selectedProjectId, sortCriteria]);
 
   const selectedProject = projects.find(project => project.id === selectedProjectId);
   const selectedProjectName = selectedProject ? selectedProject.name : 'No Project Selected';
@@ -338,9 +314,9 @@ const AppContent = () => {
             >
               <HStack justifyContent="space-between" mb={4}>
                 <HStack>
-                  <Heading as="h4" size={{ base: "sm", md: "md" }} color="teal.500" display={isSidebarCollapsed ? "none" : "block"}>
+                  <Text fontSize="lg" color="teal.500" display={isSidebarCollapsed ? "none" : "block"}>
                     Projects
-                  </Heading>
+                  </Text>
                   {!isSidebarCollapsed && (
                     <IconButton
                       aria-label="Toggle Dark Mode"
@@ -417,35 +393,10 @@ const AppContent = () => {
                     unmountOnExit
                   >
                     <div>
-                      <Heading as="h2" size={{ base: "lg", md: "xl" }} mb={6} textAlign="center" color="teal.500" textShadow="1px 1px 2px rgba(0, 0, 0, 0.7)">
-                        {selectedProjectName}
-                      </Heading>
-
-                      {/* Enhanced Search Bar */}
-                      <HStack mb={4} justifyContent="center">
-                        <Box 
-                          borderWidth={1} 
-                          borderColor="teal.500" 
-                          borderRadius="md" 
-                          p={2} 
-                          bg="white" 
-                          boxShadow="md"
-                          width={{ base: "100%", md: "auto" }}
-                        >
-                          <Input
-                            placeholder="Search Tasks"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            border="none"
-                            _focus={{ outline: 'none', boxShadow: '0 0 0 1px teal.500' }}
-                            _placeholder={{ color: 'gray.400' }}
-                          />
-                        </Box>
-                      </HStack>
-
-                      {/* Button to add a default task */}
-                      <HStack mb={4} justifyContent="center">
-                        <Button colorScheme="teal" onClick={addDefaultTask}>Add A Task</Button>
+                      <HStack justifyContent="space-between" mb={4}>
+                        <Button colorScheme="teal" onClick={addDefaultTask} leftIcon={<AddIcon />}>
+                          Add A Task
+                        </Button>
                       </HStack>
 
                       {/* Displaying tasks in a grid */}
@@ -474,26 +425,11 @@ const AppContent = () => {
                 <Text fontSize="lg">© 2024 To-Do App</Text>
               </Box>
             </Flex>
-
-            {/* Container for Sorting Menu and Clock */}
-            <Flex direction="column" p={4} width={{ base: "full", md: "300px" }} bg="rgba(255, 255, 255, 0.8)" boxShadow="lg">
-                {/* Sorting Menu */}
-                <SortingMenu
-                sortCriteria={sortCriteria}
-                handleSortChange={handleSortChange}
-                resetSort={resetSort}
-                selectAllSort={selectAllSort}
-              />
-              {/* Clock */}
-              <Box mt={4}>
-                <Clock />
-              </Box>
-            </Flex>
           </Flex>
         </Parallax>
       )}
     </div>
-
   );
 };
+
 export default AppContent;
